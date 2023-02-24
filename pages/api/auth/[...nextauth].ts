@@ -4,6 +4,7 @@ import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
 import TwitterProvider from "next-auth/providers/twitter"
 import Auth0Provider from "next-auth/providers/auth0"
+import bcrypt from 'bcrypt';
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
 
@@ -57,6 +58,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token }) {
       token.userRole = "admin"
+
+      // Using bcrypt here creates the issue
+      bcrypt.hash(token.userRole, 10, (err, hash) => {
+        token.userRole = hash
+      })
       return token
     },
   },
